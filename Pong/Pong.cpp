@@ -26,7 +26,8 @@ int main()
 
 	// A cool retro-style font
 	Font font;
-	font.loadFromFile("fonts/DS-DIGI.ttf");
+	font.loadFromFile("../fonts/DS-DIGI.ttf");
+
 
 	// Set the font to our retro=style
 	hud.setFont(font);
@@ -46,24 +47,85 @@ int main()
 	{
 		/*
 		Handle the player input
-		***********************
-		***********************
-		***********************
+		*********************************************
+		*********************************************
+		*********************************************
+		*********************************************
 		*/
+
+
+
+		Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == Event::Closed)
+				// Quit the game when the window is closed
+				window.close();
+
+		}
+
+		// Handle the player quitting
+		if (Keyboard::isKeyPressed(Keyboard::Escape))
+		{
+			window.close();
+		}
+
+		// Handle the pressing and releasing of the arrow keys
+		if (Keyboard::isKeyPressed(Keyboard::Left))
+		{
+			bat.moveLeft();
+		}
+		else
+		{
+			bat.stopLeft();
+		}
+
+		if (Keyboard::isKeyPressed(Keyboard::Right))
+		{
+			bat.moveRight();
+		}
+		else
+		{
+			bat.stopRight();
+		}
+
+
 
 		/*
 		Update the bat, the ball and the HUD
-		***********************
-		***********************
-		***********************
+		*********************************************
+		*********************************************
+		*********************************************
+		*********************************************
 		*/
+
+
+
+		// Update the delta time
+		Time dt = clock.restart();
+		bat.update(dt);
+
+		// Update the HUD text
+		std::stringstream ss;
+		ss << "Score: " << score << "    Lives: " << lives;
+		hud.setString(ss.str());
+
+
 
 		/*
 		Draw the bat, the ball and the HUD
-		***********************
-		***********************
-		***********************
+		*********************************************
+		*********************************************
+		*********************************************
+		*********************************************
 		*/
+
+
+
+		window.clear();
+		window.draw(hud);
+		window.draw(bat.getShape());
+		window.display();
 
 	}
 
