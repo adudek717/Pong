@@ -12,8 +12,8 @@ private:
 	RectangleShape m_Shape;
 
 	float m_Speed = 300.0f;
-	float m_DirectionX = .2f;
-	float m_DirectionY = .2f;
+	float m_DirectionX = 1.2f;
+	float m_DirectionY = 1.2f;
 
 public:
 	Ball(float startX, float startY);

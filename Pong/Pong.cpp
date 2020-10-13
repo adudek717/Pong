@@ -1,4 +1,5 @@
 #include "Bat.h"
+#include "Ball.h"
 #include <sstream>
 #include <cstdlib>
 #include <SFML/Graphics.hpp>
@@ -19,7 +20,8 @@ int main()
 	// Create a bat at the bottom center of the screen
 	Bat bat(1920 / 2, 1080 - 20);
 
-	// We will ad a ball
+	// Create a ball
+	Ball ball(1920 / 2, 0);
 
 	// Create a Text object called HUD
 	Text hud;
@@ -71,7 +73,7 @@ int main()
 		}
 
 		// Handle the pressing and releasing of the arrow keys
-		if (Keyboard::isKeyPressed(Keyboard::Left))
+		if (Keyboard::isKeyPressed(Keyboard::Left) && (bat.getPosition().left > 0))
 		{
 			bat.moveLeft();
 		}
@@ -80,7 +82,7 @@ int main()
 			bat.stopLeft();
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::Right))
+		if (Keyboard::isKeyPressed(Keyboard::Right) && (bat.getPosition().left + bat.getPosition().width < window.getSize().x))
 		{
 			bat.moveRight();
 		}
@@ -104,11 +106,50 @@ int main()
 		// Update the delta time
 		Time dt = clock.restart();
 		bat.update(dt);
+		ball.update(dt);
 
 		// Update the HUD text
 		std::stringstream ss;
 		ss << "Score: " << score << "    Lives: " << lives;
 		hud.setString(ss.str());
+
+		// Handle ball hitting the bottom
+		if (ball.getPosition().top > window.getSize().y)
+		{
+			// reverse the ball direction
+			ball.reboundBottom();
+			// Remove a life
+			lives--;
+			// Check for zero lives
+			if (lives < 1) {
+				// reset the score
+				score = 0;
+				// reset the lives
+				lives = 3;
+			}
+		}
+
+		// Handle ball hitting top
+		if (ball.getPosition().top < 0)
+		{
+			ball.reboundBatOrTop();
+			// Add a point to the players score
+			score++;
+		}
+
+		// Handle ball hitting sides
+		if (ball.getPosition().left < 0 ||
+			ball.getPosition().left + ball.getPosition().width > window.getSize().x)
+		{
+			ball.reboundSides();
+		}
+
+		// Has the ball hit the bat?
+		if (ball.getPosition().intersects(bat.getPosition()))
+		{
+			// Hit detected so reverse the ball and score a point
+			ball.reboundBatOrTop();
+		}
 
 
 
@@ -125,6 +166,7 @@ int main()
 		window.clear();
 		window.draw(hud);
 		window.draw(bat.getShape());
+		window.draw(ball.getShape());
 		window.display();
 
 	}
